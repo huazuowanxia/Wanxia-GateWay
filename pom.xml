@@ -16,6 +16,7 @@
         <module>Gateway-Common</module>
         <module>Gateway-Config</module>
         <module>Gateway-Register</module>
+        <module>GateWay-Cache</module>
     </modules>
 
     <properties>
