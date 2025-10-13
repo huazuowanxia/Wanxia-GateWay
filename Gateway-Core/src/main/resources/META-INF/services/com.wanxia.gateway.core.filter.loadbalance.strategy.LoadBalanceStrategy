@@ -1,0 +1,6 @@
+com.wanxia.gateway.core.filter.loadbalance.strategy.RoundRobinLoadBalanceStrategy
+com.wanxia.gateway.core.filter.loadbalance.strategy.RandomLoadBalanceStrategy
+com.wanxia.gateway.core.filter.loadbalance.strategy.WeightLoadBalanceStrategy
+com.wanxia.gateway.core.filter.loadbalance.strategy.GrayLoadBalanceStrategy
+com.wanxia.gateway.core.filter.loadbalance.strategy.ClientIpLoadBalanceStrategy
+com.wanxia.gateway.core.filter.loadbalance.strategy.ClientIpConsistentHashLoadBalanceStrategy

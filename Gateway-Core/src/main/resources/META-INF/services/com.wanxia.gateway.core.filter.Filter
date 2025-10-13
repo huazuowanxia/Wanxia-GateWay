@@ -1,0 +1,5 @@
+com.wanxia.gateway.core.filter.loadbalance.LoadBalanceFilter
+com.wanxia.gateway.core.filter.gray.GrayFilter
+com.wanxia.gateway.core.filter.route.RouteFilter
+com.wanxia.gateway.core.filter.cors.CorsFilter
+com.wanxia.gateway.core.filter.flow.FlowFilter
