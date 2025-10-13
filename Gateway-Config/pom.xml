@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>GraceGateway</artifactId>
+        <artifactId>Gateway</artifactId>
         <groupId>com.grace</groupId>
         <version>1.0</version>
     </parent>
 
-    <artifactId>GraceGateway-Config</artifactId>
+    <artifactId>Gateway-Config</artifactId>
 
     <description>配置模块，加载网关配置</description>
 
@@ -24,7 +24,7 @@
 
         <dependency>
             <groupId>com.grace</groupId>
-            <artifactId>GraceGateway-Common</artifactId>
+            <artifactId>Gateway-Common</artifactId>
             <version>1.0</version>
         </dependency>
 

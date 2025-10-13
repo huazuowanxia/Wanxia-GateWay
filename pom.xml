@@ -4,18 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>GraceGateway</artifactId>
+    <artifactId>Gateway</artifactId>
     <groupId>com.grace</groupId>
     <version>1.0</version>
 
     <packaging>pom</packaging>
 
     <modules>
-        <module>GraceGateway-Bootstrap</module>
-        <module>GraceGateway-Core</module>
-        <module>GraceGateway-Common</module>
-        <module>GraceGateway-Config</module>
-        <module>GraceGateway-Register</module>
+        <module>Gateway-Bootstrap</module>
+        <module>Gateway-Core</module>
+        <module>Gateway-Common</module>
+        <module>Gateway-Config</module>
+        <module>Gateway-Register</module>
     </modules>
 
     <properties>
