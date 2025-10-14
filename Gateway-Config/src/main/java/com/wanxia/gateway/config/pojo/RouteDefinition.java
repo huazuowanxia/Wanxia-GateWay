@@ -13,6 +13,7 @@ import static com.wanxia.gateway.common.constant.GrayConstant.THRESHOLD_GRAY_STR
 import static com.wanxia.gateway.common.constant.LoadBalanceConstant.ROUND_ROBIN_LOAD_BALANCE_STRATEGY;
 import static com.wanxia.gateway.common.constant.LoadBalanceConstant.VIRTUAL_NODE_NUM;
 import static com.wanxia.gateway.common.enums.FlowEnum.TOKEN_BUCKET;
+import static com.wanxia.gateway.common.enums.ResilienceEnum.*;
 
 @Data
 public class RouteDefinition {
@@ -61,7 +62,7 @@ public class RouteDefinition {
         private CircuitBreakerEnum type = CircuitBreakerEnum.COUNT_BASED; // 滑动窗口类型，如果是COUNT_BASED，则是计数，如果是TIME_BASED，则是时间，单位是秒
         private int slidingWindowSize = 100; // 滑动窗口大小
         private int minimumNumberOfCalls = 100; // 统计失败率或慢调用率的最小调用数
-        private int waitDurationInOpenState = 60000; // 断路器从开启过渡到半开应等待的时间，单位ms
+        private int waitDurationInOpenState = 60000; // 断路器从开启过渡到半开等待的时间，单位ms
         private boolean automaticTransitionFromOpenToHalfOpenEnabled = false; // 是否开启额外线程监听断路器从开启到半开的状态变化，如果不开启，则需时间到了并且有请求才会到半开状态
 
         // Fallback
