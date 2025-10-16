@@ -6,6 +6,8 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wanxia.gateway.common.constant.ConfigConstant.*;
+
 /**
  * 网关静态配置
  */

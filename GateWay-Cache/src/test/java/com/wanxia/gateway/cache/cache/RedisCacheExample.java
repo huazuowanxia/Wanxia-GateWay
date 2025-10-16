@@ -159,7 +159,6 @@ public class RedisCacheExample {
         JsonNode json = mapper.readTree(legacyJson);
 
         ProviderConfig config = new ProviderConfig();
-        config.convertLegacyJson(json);
         config.validate();
 
         System.out.println("\n解析后的配置:");

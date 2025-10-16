@@ -1,6 +1,7 @@
 package com.wanxia.gateway.cache.cache;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.wanxia.gateway.cache.util.JsonUtil;
 import lombok.Data;
 
 /**
@@ -21,8 +22,8 @@ public class ProviderConfig {
     private int database;
 
     public void fromJson(JsonNode json) {
-        this.type = getStringValue(json, "type", null);
-        this.serviceName = getStringValue(json, "serviceName", null);
+        this.type = JsonUtil.getStringValue(json, "type", null);
+        this.serviceName = JsonUtil.getStringValue(json, "serviceName", null);
 
         if (json.has("servicePort")) {
             this.servicePort = json.get("servicePort").asInt();
@@ -34,56 +35,32 @@ public class ProviderConfig {
             }
         }
 
-        this.serviceHost = getStringValue(json, "serviceHost", null);
-        this.username = getStringValue(json, "username", "");
-        this.password = getStringValue(json, "password", "");
-        this.database = getIntValue(json, "database", CacheConstants.DEFAULT_DATABASE);
-        this.timeout = getIntValue(json, "timeout", CacheConstants.DEFAULT_TIMEOUT);
-        this.cacheTTL = getIntValue(json, "cacheTTL", CacheConstants.DEFAULT_CACHE_TTL);
-        this.cacheKeyPrefix = getStringValue(json, "cacheKeyPrefix", CacheConstants.DEFAULT_CACHE_PREFIX);
-    }
-
-    public void convertLegacyJson(JsonNode json) {
-        if (json.has("redis")) {
-            fromJson(json.get("redis"));
-        }
-        this.type = CacheConstants.PROVIDER_TYPE_REDIS;
-
-        if (json.has("cacheTTL")) {
-            this.cacheTTL = json.get("cacheTTL").asInt();
-        }
+        this.serviceHost = JsonUtil.getStringValue(json, "serviceHost", null);
+        this.username = JsonUtil.getStringValue(json, "username", "");
+        this.password = JsonUtil.getStringValue(json, "password", "");
+        this.database = JsonUtil.getIntValue(json, "database", CacheConstants.DEFAULT_DATABASE);
+        this.timeout = JsonUtil.getIntValue(json, "timeout", CacheConstants.DEFAULT_TIMEOUT);
+        this.cacheTTL = JsonUtil.getIntValue(json, "cacheTTL", CacheConstants.DEFAULT_CACHE_TTL);
+        this.cacheKeyPrefix = JsonUtil.getStringValue(json, "cacheKeyPrefix", CacheConstants.DEFAULT_CACHE_PREFIX);
     }
 
     public void validate() {
         if (type == null || type.isEmpty()) {
-            throw new IllegalArgumentException("cache service type is required");
+            throw new IllegalArgumentException("缺少缓存类型");
         }
         if (serviceName == null || serviceName.isEmpty()) {
-            throw new IllegalArgumentException("cache service name is required");
+            throw new IllegalArgumentException("缺少缓存服务名");
         }
         if (cacheTTL < 0) {
-            throw new IllegalArgumentException("cache TTL must be greater than or equal to 0");
+            throw new IllegalArgumentException("缓存超时时间必须大于等于0");
         }
 
         ProviderInitializer initializer = ProviderInitializerRegistry.getInitializer(type);
         if (initializer == null) {
-            throw new IllegalArgumentException("unknown cache service provider type: " + type);
+            throw new IllegalArgumentException("未知的缓存服务: " + type);
         }
         initializer.validateConfig(this);
     }
 
-    private String getStringValue(JsonNode json, String fieldName, String defaultValue) {
-        if (json.has(fieldName) && !json.get(fieldName).isNull()) {
-            return json.get(fieldName).asText();
-        }
-        return defaultValue;
-    }
-
-    private int getIntValue(JsonNode json, String fieldName, int defaultValue) {
-        if (json.has(fieldName)) {
-            return json.get(fieldName).asInt(defaultValue);
-        }
-        return defaultValue;
-    }
 }
 

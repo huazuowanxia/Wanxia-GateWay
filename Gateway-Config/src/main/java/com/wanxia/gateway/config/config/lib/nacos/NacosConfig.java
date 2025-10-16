@@ -2,6 +2,8 @@ package com.wanxia.gateway.config.config.lib.nacos;
 
 import lombok.Data;
 
+import static com.wanxia.gateway.common.constant.NacosConstant.*;
+
 @Data
 public class NacosConfig {
 

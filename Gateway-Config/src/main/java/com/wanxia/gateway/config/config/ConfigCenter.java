@@ -4,6 +4,8 @@ import com.wanxia.gateway.common.enums.ConfigCenterEnum;
 import com.wanxia.gateway.config.config.lib.nacos.NacosConfig;
 import lombok.Data;
 
+import static com.wanxia.gateway.common.constant.ConfigCenterConstant.*;
+
 /**
  * 配置中心
  */
