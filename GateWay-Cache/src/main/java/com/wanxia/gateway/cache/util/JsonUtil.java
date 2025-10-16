@@ -16,4 +16,11 @@ public class JsonUtil {
         }
         return defaultValue;
     }
+
+    public static double getDoubleValue(JsonNode json, String fieldName, double defaultValue) {
+        if (json.has(fieldName)) {
+            return json.get(fieldName).asDouble(defaultValue);
+        }
+        return defaultValue;
+    }
 }
