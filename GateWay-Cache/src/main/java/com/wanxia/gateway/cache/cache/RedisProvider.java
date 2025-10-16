@@ -1,5 +1,6 @@
 package com.wanxia.gateway.cache.cache;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import redis.clients.jedis.JedisPooled;
 import redis.clients.jedis.exceptions.JedisException;
@@ -9,16 +10,15 @@ import java.util.function.Consumer;
 /**
  * Redis 缓存提供者实现
  */
+@Slf4j
 public class RedisProvider implements Provider {
 
     private final ProviderConfig config;
-    private final Logger logger;
     private static JedisPooled jedis;
     private volatile boolean ready = false;
 
-    public RedisProvider(ProviderConfig config, Logger logger) {
+    public RedisProvider(ProviderConfig config) {
         this.config = config;
-        this.logger = logger;
     }
 
     @Override
@@ -48,51 +48,53 @@ public class RedisProvider implements Provider {
             // 测试连接
             jedis.ping();
             ready = true;
-            logger.info("redis init successfully, host: {}, port: {}, database: {}", host, port, database);
+            log.info("redis初始化成功, host: {}, port: {}, database: {}", host, port, database);
         } catch (Exception e) {
             ready = false;
-            logger.error("redis init failed, will try later. Error: {}", e.getMessage(), e);
+            log.error("redis初始化失败, 稍后重试. Error: {}", e.getMessage(), e);
         }
     }
 
     @Override
-    public void get(String key, Consumer<String> callback) {
-        if (!ready) {
-            logger.warn("Redis is not ready, get operation skipped for key: {}", key);
-            callback.accept(null);
-            return;
-        }
+    public String get(String key){
+        return get(key, null);
+    }
 
-        try {
-            String value = jedis.get(key);
-            callback.accept(value);
-        } catch (JedisException e) {
-            logger.error("Redis get operation failed for key: {}, error: {}", key, e.getMessage());
-            callback.accept(null);
+
+    @Override
+    public String get(String key, Consumer<String> callback) {
+        if (!ready) {
+            throw new RuntimeException("redis未初始化");
         }
+        String value = jedis.get(key);
+        if (callback != null) {
+            callback.accept(value);
+        }
+        return value;
+    }
+
+    @Override
+    public void set(String key, String value) {
+        set(key, value, null);
     }
 
     @Override
     public void set(String key, String value, Consumer<Boolean> callback) {
         if (!ready) {
-            logger.warn("Redis is not ready, set operation skipped for key: {}", key);
-            callback.accept(false);
-            return;
+            throw new RuntimeException("redis未初始化");
         }
 
-        try {
-            String result;
-            if (config.getCacheTTL() == 0) {
-                // 永不过期
-                result = jedis.set(key, value);
-            } else {
-                // 设置过期时间（秒）
-                result = jedis.setex(key, config.getCacheTTL(), value);
-            }
+        String result;
+        if (config.getCacheTTL() == 0) {
+            // 永不过期
+            result = jedis.set(key, value);
+        } else {
+            // 设置过期时间（秒）
+            result = jedis.setex(key, config.getCacheTTL(), value);
+        }
+
+        if (callback != null) {
             callback.accept("OK".equalsIgnoreCase(result));
-        } catch (JedisException e) {
-            logger.error("Redis set operation failed for key: {}, error: {}", key, e.getMessage());
-            callback.accept(false);
         }
     }
 
@@ -102,22 +104,15 @@ public class RedisProvider implements Provider {
     }
 
     /**
-     * 检查 Redis 是否就绪
-     */
-    public boolean isReady() {
-        return ready;
-    }
-
-    /**
      * 关闭连接
      */
     public void close() {
         if (jedis != null) {
             try {
                 jedis.close();
-                logger.info("Redis connection closed");
+                log.info("Redis connection closed");
             } catch (Exception e) {
-                logger.error("Error closing Redis connection: {}", e.getMessage());
+                log.error("Error closing Redis connection: {}", e.getMessage());
             }
         }
     }

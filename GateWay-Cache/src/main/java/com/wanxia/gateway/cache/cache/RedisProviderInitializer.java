@@ -15,8 +15,8 @@ public class RedisProviderInitializer implements ProviderInitializer {
     }
 
     @Override
-    public Provider createProvider(ProviderConfig config, Logger logger) {
-        RedisProvider provider = new RedisProvider(config, logger);
+    public Provider createProvider(ProviderConfig config) {
+        RedisProvider provider = new RedisProvider(config);
         provider.init(config.getUsername(), config.getPassword(), config.getTimeout());
         return provider;
     }

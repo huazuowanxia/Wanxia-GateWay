@@ -16,7 +16,7 @@ public class ProviderFactory {
 
     public static Provider createProvider(ProviderConfig config, Logger logger) {
         if (config == null) {
-            throw new IllegalArgumentException("Provider config cannot be null");
+            throw new IllegalArgumentException("配置不能为空");
         }
 
         String type = config.getType();
@@ -26,7 +26,7 @@ public class ProviderFactory {
             throw new IllegalArgumentException("unknown provider type: " + type);
         }
 
-        return initializer.createProvider(config, logger);
+        return initializer.createProvider(config);
     }
 
     private ProviderFactory() {

@@ -9,6 +9,6 @@ public interface ProviderInitializer {
 
     void validateConfig(ProviderConfig config);
 
-    Provider createProvider(ProviderConfig config, Logger logger);
+    Provider createProvider(ProviderConfig config);
 }
 

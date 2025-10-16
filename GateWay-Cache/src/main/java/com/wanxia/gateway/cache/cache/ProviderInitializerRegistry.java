@@ -17,10 +17,10 @@ public class ProviderInitializerRegistry {
 
     public static void registerInitializer(String type, ProviderInitializer initializer) {
         if (type == null || type.isEmpty()) {
-            throw new IllegalArgumentException("Provider type cannot be null or empty");
+            throw new IllegalArgumentException("提供者类型不能为空");
         }
         if (initializer == null) {
-            throw new IllegalArgumentException("Initializer cannot be null");
+            throw new IllegalArgumentException("初始化器不能为空");
         }
         INITIALIZERS.put(type, initializer);
     }
@@ -31,9 +31,6 @@ public class ProviderInitializerRegistry {
 
     public static boolean hasInitializer(String type) {
         return INITIALIZERS.containsKey(type);
-    }
-
-    private ProviderInitializerRegistry() {
     }
 }
 
