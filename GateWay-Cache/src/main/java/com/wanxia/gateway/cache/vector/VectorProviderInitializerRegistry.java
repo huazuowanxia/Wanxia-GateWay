@@ -17,7 +17,7 @@ public class VectorProviderInitializerRegistry {
         // INITIALIZERS.put(VectorConstants.PROVIDER_TYPE_ES, new EsProviderInitializer());
         // INITIALIZERS.put(VectorConstants.PROVIDER_TYPE_WEAVIATE, new WeaviateProviderInitializer());
         // INITIALIZERS.put(VectorConstants.PROVIDER_TYPE_PINECONE, new PineconeProviderInitializer());
-        // INITIALIZERS.put(VectorConstants.PROVIDER_TYPE_QDRANT, new QdrantProviderInitializer());
+        INITIALIZERS.put(VectorConstants.PROVIDER_TYPE_QDRANT, new QdrantProviderInitializer());
         // INITIALIZERS.put(VectorConstants.PROVIDER_TYPE_MILVUS, new MilvusProviderInitializer());
     }
 
