@@ -17,6 +17,7 @@
         <module>Gateway-Config</module>
         <module>Gateway-Register</module>
         <module>GateWay-Cache</module>
+        <module>GateWay-TokenRateLimit</module>
     </modules>
 
     <properties>
