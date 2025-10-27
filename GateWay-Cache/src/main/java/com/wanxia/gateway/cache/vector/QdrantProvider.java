@@ -22,6 +22,8 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static com.wanxia.gateway.cache.vector.VectorConstants.PUT_COLLECTIONS;
+
 /**
  * Qdrant 向量数据库提供者实现
  */
@@ -60,8 +62,7 @@ public class QdrantProvider implements Provider, EmbeddingQuerier, AnswerAndEmbe
     }
 
     @Override
-    public void uploadAnswerAndEmbedding(String queryString, double[] queryEmbedding,
-                                        String answer, Consumer<Exception> callback) {
+    public Boolean uploadAnswerAndEmbedding(String queryString, double[] queryEmbedding, String answer) {
         try {
             // 构建请求体
             QdrantInsertRequest request = new QdrantInsertRequest();
@@ -77,7 +78,7 @@ public class QdrantProvider implements Provider, EmbeddingQuerier, AnswerAndEmbe
             request.setPoints(List.of(point));
 
             // 发送 PUT 请求
-            String url = String.format("%s/collections/%s/points", baseUrl, config.getCollectionId());
+            String url = String.format(PUT_COLLECTIONS, baseUrl, config.getCollectionId());
             String requestBody = objectMapper.writeValueAsString(request);
 
             log.debug("[Qdrant] Upload request: {}", requestBody);
@@ -89,28 +90,26 @@ public class QdrantProvider implements Provider, EmbeddingQuerier, AnswerAndEmbe
             }
             httpPut.setEntity(new StringEntity(requestBody, "UTF-8"));
 
-            try (CloseableHttpResponse response = httpClient.execute(httpPut)) {
-                int statusCode = response.getStatusLine().getStatusCode();
-                String responseBody = EntityUtils.toString(response.getEntity());
+            CloseableHttpResponse response = httpClient.execute(httpPut);
+            int statusCode = response.getStatusLine().getStatusCode();
+            String responseBody = EntityUtils.toString(response.getEntity());
 
-                log.debug("[Qdrant] Upload response: statusCode={}, body={}", statusCode, responseBody);
-
-                if (statusCode >= 200 && statusCode < 300) {
-                    callback.accept(null);
-                } else {
-                    callback.accept(new RuntimeException(
-                        String.format("[Qdrant] Upload failed with status %d: %s", statusCode, responseBody)));
-                }
+            log.debug("[Qdrant] Upload response: statusCode={}, body={}", statusCode, responseBody);
+            if (statusCode < 200 && statusCode >= 300) {
+                throw new RuntimeException(String.format("[Qdrant] Upload failed with status %d: %s", statusCode, responseBody));
             }
 
         } catch (Exception e) {
             log.error("[Qdrant] Failed to upload embedding: {}", e.getMessage(), e);
-            callback.accept(e);
+            return false;
         }
+
+        return true;
     }
 
     @Override
-    public void queryEmbedding(double[] embedding, BiConsumer<List<QueryResult>, Exception> callback) {
+    public List<QueryResult> queryEmbedding(double[] embedding, BiConsumer<List<QueryResult>, Exception> callback) {
+        List<QueryResult> results = new ArrayList<>();
         try {
             // 构建查询请求
             QdrantQueryRequest request = new QdrantQueryRequest();
@@ -137,19 +136,17 @@ public class QdrantProvider implements Provider, EmbeddingQuerier, AnswerAndEmbe
 
                 log.debug("[Qdrant] Query response: statusCode={}, body={}", statusCode, responseBody);
 
-                if (statusCode >= 200 && statusCode < 300) {
-                    List<QueryResult> results = parseQueryResponse(responseBody);
-                    callback.accept(results, null);
-                } else {
-                    callback.accept(null, new RuntimeException(
-                        String.format("[Qdrant] Query failed with status %d: %s", statusCode, responseBody)));
+                if (statusCode < 200 && statusCode >= 300) {
+                    throw new RuntimeException(String.format("[Qdrant] Query failed with status %d: %s", statusCode, responseBody));
                 }
+                results = parseQueryResponse(responseBody);
             }
 
         } catch (Exception e) {
             log.error("[Qdrant] Failed to query embedding: {}", e.getMessage(), e);
-            callback.accept(null, e);
         }
+
+        return results;
     }
 
     /**

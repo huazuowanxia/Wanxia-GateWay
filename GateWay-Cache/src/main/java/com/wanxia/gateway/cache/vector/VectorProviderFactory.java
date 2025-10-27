@@ -13,20 +13,14 @@ public class VectorProviderFactory {
      * @throws IllegalArgumentException 如果提供者类型未知
      */
     public static Provider createProvider(ProviderConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException("Provider config cannot be null");
-        }
-        
+        if (config == null) throw new IllegalArgumentException("向量数据库配置不能为空");
+
         String type = config.getType();
         VectorProviderInitializer initializer = VectorProviderInitializerRegistry.getInitializer(type);
         
-        if (initializer == null) {
-            throw new IllegalArgumentException("unknown provider type: " + type);
-        }
-        
+        if (initializer == null) throw new IllegalArgumentException("未知的类型: " + type);
+
         return initializer.createProvider(config);
     }
-    
-    private VectorProviderFactory() {
-    }
+
 }

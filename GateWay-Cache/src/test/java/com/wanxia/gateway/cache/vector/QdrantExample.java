@@ -30,6 +30,8 @@ public class QdrantExample {
         config.setCollectionId("test_collection");
         config.setTopK(3);
         config.setTimeout(10000);
+        config.setThreshold(0.8);
+        config.setThresholdRelation("gt");
 
         // 验证配置
         config.validate();
